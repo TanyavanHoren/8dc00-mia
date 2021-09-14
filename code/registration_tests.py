@@ -47,8 +47,37 @@ def combining_transforms():
     X = util.test_object(1)
 
     #------------------------------------------------------------------#
-    # TODO: Experiment with combining transformation matrices.
+    
+    X_rs = reg.rotate(np.pi/2).dot(reg.shear(2,3)).dot(X) # Rotate first, then shear
+    
+    X_rr = reg.rotate(np.pi).dot(reg.reflect(-1,-1)).dot(X) # Rotate then reflect
+    
+    X_t = reg.reflect(-1,1).dot(reg.rotate(np.pi/2)).dot(X) # Given example, reflect then rotate
+    
+    X_ss = reg.scale(0.5,0.5).dot(reg.shear(5,4)).dot(X) # Scale then shear
+    
     #------------------------------------------------------------------#
+    
+    fig = plt.figure(figsize=(12,5))
+    ax1 = fig.add_subplot(141, xlim=(-4,4), ylim=(-4,4))
+    ax2 = fig.add_subplot(142, xlim=(-4,4), ylim=(-4,4))
+    ax3 = fig.add_subplot(143, xlim=(-4,4), ylim=(-4,4))
+    ax4 = fig.add_subplot(144, xlim=(-4,4), ylim=(-4,4))
+
+    util.plot_object(ax1, X)
+    util.plot_object(ax2, X_rs)
+    util.plot_object(ax3, X_rr)
+    util.plot_object(ax4, X_ss)
+
+    ax1.set_title('Original')
+    ax2.set_title('Rotation and shear')
+    ax3.set_title('Rotate and reflect')
+    ax4.set_title('Scale and shear')
+
+    ax1.grid()
+    ax2.grid()
+    ax3.grid()
+    ax4.grid()
 
 
 def t2h_test():
@@ -79,7 +108,16 @@ def arbitrary_rotation():
     Xh = util.c2h(X)
 
     #------------------------------------------------------------------#
-    # TODO: Perform rotation of the test shape around the first vertex
+    from registration_util import t2h
+    
+    Xr = X[:,0]
+    Xrneg = -X[:,0]
+    
+    t0 = np.array([0,0])
+    Tr = t2h(reg.rotate(np.pi/4), t0)
+    Tt = t2h(reg.identity(),Xr)
+    Ttneg = t2h(reg.identity(),Xrneg)
+    T = Tt.dot(Tr).dot(Ttneg)
     #------------------------------------------------------------------#
 
     X_rot = T.dot(Xh)
@@ -134,12 +172,13 @@ def image_transform_test():
     ax3.set_title('Scaling')
     
 
-def ls_solve_test():
+def ls_solve_test(A, b):
 
     #------------------------------------------------------------------#
     # TODO: Test your implementation of the ls_solve definition
+    w, E = reg.ls_solve(A, b)
     #------------------------------------------------------------------#
-
+    return w, E
 
 def ls_affine_test():
 
@@ -177,8 +216,11 @@ def ls_affine_test():
     ax1.grid()
     ax2.grid()
     ax3.grid()
+    
+   
 
 
+    
 # SECTION 3. Image similarity metrics
 
 

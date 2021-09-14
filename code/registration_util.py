@@ -44,11 +44,17 @@ def t2h(T, t):
     # Th - homogeneous transformation matrix
 
     #------------------------------------------------------------------#
-    # TODO: Implement conversion of a transformation matrix and a translation vector to homogeneous transformation matrix.
+    n = np.zeros([1,T.shape[1]])
+    Tz = np.concatenate((T,n))
+    #print('t=',t) # For debugging
+    t = np.append(t,1).reshape(3,1)
+    #print('T=',T,'\n Tz=',Tz,'\n t=',t) # For debugging
+    Th = np.append(Tz,t, axis = 1)
+    #print(Th) # For debugging
     #------------------------------------------------------------------#
     
-    
-    print("change output to return Th")
+    return Th
+
 
 def plot_object(ax, X):
     # Plot 2D object.
