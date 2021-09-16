@@ -235,7 +235,9 @@ def correlation_test():
     assert abs(C1 - 1) < 10e-10, "Correlation function is incorrectly implemented (self correlation test)"
 
     #------------------------------------------------------------------#
-    # TODO: Implement a few more tests of the correlation definition
+    C2_a = reg.correlation(0.5*I, J)
+    C2_b = reg.correlation(I, J)
+    assert abs(C2_a - C2_b) < 10e-10, "Correlation function is incorrectly implemented (self correlation test)"
     #------------------------------------------------------------------#
 
     print('Test successful!')
@@ -248,9 +250,15 @@ def mutual_information_test():
     # mutual information of an image with itself
     p1 = reg.joint_histogram(I, I)
     MI1 = reg.mutual_information(p1)
+    print('Mutual information image with itself: ', MI1)
 
     #------------------------------------------------------------------#
     # TODO: Implement a few tests of the mutual_information definition
+    rand_1 = np.random.randint(255, size=(512, 512))
+    rand_2 = np.random.randint(255, size=(512, 512))
+    p = reg.joint_histogram(rand_1, rand_2)
+    mut_inf = reg.mutual_information(p)
+    print('Mutual information random images: ', mut_inf)
     #------------------------------------------------------------------#
 
     print('Test successful!')
