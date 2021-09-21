@@ -286,12 +286,21 @@ def mutual_information_e_test():
 def ngradient_test():
 
     # NOTE: test function not strictly scalar-valued
-    exponential = lambda x: np.exp(x)
-    g1 = reg.ngradient(exponential, np.ones((1,)))
-    assert abs(g1 - exponential(1)) < 1e-5, "Numerical gradient is incorrectly implemented (exponential test)"
+    # exponential = lambda x: np.exp(x)
+    # g1 = reg.ngradient(exponential, np.ones((1,)))
+    # assert abs(g1 - exponential(1)) < 1e-5, "Numerical gradient is incorrectly implemented (exponential test)"
 
     #------------------------------------------------------------------#
-    # TODO: Implement a few more test cases of ngradient
+    # exponential_2 = lambda x: np.exp(2*x)
+    # g1_2 = reg.ngradient(exponential_2, np.ones((1,)))
+    # assert abs(g1_2 - 2*exponential_2(1)) < 1e-5, "Numerical gradient is incorrectly implemented (exponential test)"
+
+    fun_xy = lambda x: 2*x[0] + 3*x[1]**2
+    der_xy = np.array([2, 18])
+    g_xy = reg.ngradient(fun_xy, np.array([2, 3]))
+    diff = abs(g_xy - der_xy)
+    assert np.any(diff < 1e-5), "Numerical gradient is incorrectly implemented (exponential test)"
+
     #------------------------------------------------------------------#
 
     print('Test successful!')
@@ -309,7 +318,6 @@ def registration_metrics_demo(use_t2=False):
 
     # create a linear space of rotation angles - 101 angles between 0 and 360 deg.
     angles = np.linspace(-np.pi, np.pi, 101, endpoint=True)
-
     CC = np.full(angles.shape, np.nan)
     MI = np.full(angles.shape, np.nan)
 

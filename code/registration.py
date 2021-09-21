@@ -197,7 +197,7 @@ def correlation(I, J):
 
     # ------------------------------------------------------------------#
     # TODO: Implement the computation of the normalized cross-correlation.
-    CC = (u.T.dot(v))/(np.sqrt(u.T.dot(u))*np.sqrt(v.T.dot(v)))
+    CC = (u.T.dot(v)) / (np.sqrt(u.T.dot(u)) * np.sqrt(v.T.dot(v)))
     # ------------------------------------------------------------------#
 
     return CC
@@ -337,6 +337,12 @@ def ngradient(fun, x, h=1e-3):
     # TODO: Implement the  computation of the partial derivatives of
     # the function at x with numerical differentiation.
     # g[k] should store the partial derivative w.r.t. the k-th parameter
+    for k in range(len(g)):
+        diff = np.zeros(len(g))
+        diff[k] = h / 2
+        x_min = x - diff
+        x_plus = x + diff
+        g[k] = (fun(x_plus) - fun(x_min)) / h
     # ------------------------------------------------------------------#
 
     return g
@@ -403,11 +409,30 @@ def affine_corr(I, Im, x, return_transform=True):
     # Im_t - transformed moving image T(Im)
     # Th - transformation matrix (only returned if return_transform=True)
 
-    NUM_BINS = 64
     SCALING = 100
 
     # ------------------------------------------------------------------#
-    # TODO: Implement the missing functionality
+    # the first element is the rotation angle
+    T = rotate(x[0]).dot(scale(x[1], x[2])).dot(shear(x[3], x[4]))
+
+    # the remaining two element are the translation
+    #
+    # the gradient ascent/descent method work best when all parameters
+    # of the function have approximately the same range of values
+    # this is  not the case for the parameters of rigid registration
+    # where the transformation matrix usually takes  much smaller
+    # values compared to the translation vector this is why we pass a
+    # scaled down version of the translation vector to this function
+    # and then scale it up when computing the transformation matrix
+
+    Th = util.t2h(T, x[5:] * SCALING)
+
+    # transform the moving image
+    Im_t, Xt = image_transform(Im, Th)
+
+    # compute the similarity between the fixed and transformed
+    # moving image
+    C = correlation(I, Im_t)
     # ------------------------------------------------------------------#
 
     if return_transform:
@@ -429,7 +454,7 @@ def affine_mi(I, Im, x, return_transform=True):
     #     are the translation
     # return_transform: Flag for controlling the return values
     # Output:
-    # C - normalized cross-correlation between I and T(Im)
+    # MI - mutual information between I and T(Im)
     # Im_t - transformed moving image T(Im)
     # Th - transformation matrix (only returned if return_transform=True)
 
@@ -437,10 +462,14 @@ def affine_mi(I, Im, x, return_transform=True):
     SCALING = 100
 
     # ------------------------------------------------------------------#
-    # TODO: Implement the missing functionality
+    T = rotate(x[0]).dot(scale(x[1], x[2])).dot(shear(x[3], x[4]))
+    Th = util.t2h(T, x[5:] * SCALING)
+    Im_t = Th.dot(Im)
+    p = joint_histogram(I, Im_t, num_bins=NUM_BINS)
+    MI = mutual_information(p)
     # ------------------------------------------------------------------#
 
     if return_transform:
-        return C, Im_t, Th
+        return MI, Im_t, Th
     else:
-        return C
+        return MI
