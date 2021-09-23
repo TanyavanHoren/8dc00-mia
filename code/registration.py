@@ -159,8 +159,6 @@ def ls_affine(X, Xm):
     # TODO: Implement least-squares fitting of an affine transformation.
     # Use the ls_solve() function that you have previously implemented.
     b_1 = X[0, :].T  # corresponds to the first column of X
-    print('A shape: ', A.shape)
-    print('b shape: ', b_1.shape)
     w_1, E = ls_solve(A, b_1)
     b_2 = X[1, :].T  # corresponds to the second column of X
     w_2, E = ls_solve(A, b_2)
