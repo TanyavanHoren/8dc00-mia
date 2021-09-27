@@ -445,7 +445,7 @@ def affine_mi(I, Im, x, return_transform=True):
     # Input:
     # I - fixed image
     # Im - moving image
-    # x - parameters of the rigid transform: the first element
+    # x - parameters of the affine transform: the first element
     #     is the rotation angle, the second and third are the
     #     scaling parameters, the fourth and fifth are the
     #     shearing parameters and the remaining two elements
@@ -462,7 +462,39 @@ def affine_mi(I, Im, x, return_transform=True):
     # ------------------------------------------------------------------#
     T = rotate(x[0]).dot(scale(x[1], x[2])).dot(shear(x[3], x[4]))
     Th = util.t2h(T, x[5:] * SCALING)
-    Im_t = Th.dot(Im)
+    Im_t, Xt = image_transform(Im, Th)
+    p = joint_histogram(I, Im_t, num_bins=NUM_BINS)
+    MI = mutual_information(p)
+    # ------------------------------------------------------------------#
+
+    if return_transform:
+        return MI, Im_t, Th
+    else:
+        return MI
+
+
+def rigid_mi(I, Im, x, return_transform=True):
+    # Computes mutual information between a fixed and
+    # a moving image transformed with a rigid transformation.
+    # Input:
+    # I - fixed image
+    # Im - moving image
+    # x - parameters of the rigid transform: the first element
+    #     is the rotation angle and the remaining two elements
+    #     are the translation
+    # return_transform: Flag for controlling the return values
+    # Output:
+    # MI - mutual information between I and T(Im)
+    # Im_t - transformed moving image T(Im)
+    # Th - transformation matrix (only returned if return_transform=True)
+
+    NUM_BINS = 64
+    SCALING = 100
+
+    # ------------------------------------------------------------------#
+    T = rotate(x[0])
+    Th = util.t2h(T, x[1:] * SCALING)
+    Im_t, Xt = image_transform(Im, Th)
     p = joint_histogram(I, Im_t, num_bins=NUM_BINS)
     MI = mutual_information(p)
     # ------------------------------------------------------------------#
