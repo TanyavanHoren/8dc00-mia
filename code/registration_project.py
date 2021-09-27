@@ -96,7 +96,8 @@ def ib_reg(filename_1, filename_2, reg_type, metric, mu, num_iter, fig_name, liv
     metric: "cc" for cross-correlation, "mi" for mutual information
     mu: the learning rate, which determines the step size
     num_iter: the number of iterations
-    fig_name: name of the file to which we write the resulting png that shows the metric as a function of the iteration
+    fig_name: name of the file to which we write the resulting png that shows the similarity
+    as a function of the iteration number
     live_plotting: True if we want plots in the notebook, False if not
     """
 
