@@ -195,7 +195,7 @@ def ib_reg(filename_1, filename_2, reg_type, metric, mu, num_iter, fig_name, liv
     plt.ylabel('Similarity')
     plt.xlim([0, num_iter])
     plt.ylim([0, 1.2])
-    plt.legend(["mu = " + str(mu)])
+    plt.legend(["$\mu$ = " + str(mu)])
     plt.grid()
     plt.savefig('../data/image_data/' + fig_name)
     plt.close(fig_save)
