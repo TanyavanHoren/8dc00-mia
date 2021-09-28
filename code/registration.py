@@ -169,7 +169,7 @@ def ls_affine(X, Xm):
 
     # ------------------------------------------------------------------#
 
-    return T
+    return T, E
 
 
 # SECTION 3. Image simmilarity metrics
